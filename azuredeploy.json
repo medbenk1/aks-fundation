@@ -35,7 +35,7 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
-                    "deploymentName": {
+                    "main.deploymentName": {
                         "value": "[parameters('deploymentName')]"
                     }
                 }
