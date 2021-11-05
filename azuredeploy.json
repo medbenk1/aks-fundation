@@ -61,6 +61,9 @@
                         "value": "[parameters('deploymentName')]"
                     },
                     "main.linkedNetwork.vnetID": {
+"value":"[reference(resourceId(parameters('resourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01')]"
+
+                        
                         "value": "[reference(concat(deployment().name,'linkedNetwork')).outputs['toMain.linkedNetwork.vnetID'].value]"
                     },
                     "main.linkedNetwork.bastionSubnetID": {
