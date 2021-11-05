@@ -24,7 +24,7 @@
         }
     },
     "variables": {
-        "linkedNetwork.nsgCoreName": "[concat('vNET',deployment().name,'nsgCore')]",
+        "linkedNetwork.nsgCoreName": "[concat(parameters('linkedNetwork.vnetName'),'nsgCore')]",
         "linkedNetwork.nsgCoreID": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('linkedNetwork.nsgCoreName'))]",
         "linkedNetwork.vnetRangesubnet": "[first(split(parameters('linkedNetwork.vnetRange'), '/'))]",
         "linkedNetwork.vnetRangesubnetOctets2": "[take(split(variables('linkedNetwork.vnetRangesubnet'), '.'), 2)]",
