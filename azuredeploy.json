@@ -90,7 +90,7 @@
                 },
                 "mode": "Incremental",
                 "templateLink": {
-                    "relativePath": "nested/linkedAksCluster.json"
+                    "relativePath": "nested/linkedAKSCluster.json"
                 }
             }
         }
