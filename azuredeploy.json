@@ -58,12 +58,6 @@
                     },
                     "main.deploymentName": {
                         "value": "[parameters('deploymentName')]"
-                    },
-                    "main.linkedNetwork.vnetID": {
-                        "value": "[resourceID('Microsoft.Network/virtualNetworks', 'HHAKS4-VNet')]"
-                    },
-                    "main.linkedNetwork.bastionSubnetID": {
-                        "value": "[resourceID('Microsoft.Network/virtualNetworks/subnets', 'HHAKS4-VNet', 'bastionSubnet')]"
                     }
                 }
             }

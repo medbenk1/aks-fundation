@@ -17,14 +17,14 @@
         },
         "main.linkedNetwork.vnetID": {
             "type": "string",
-            "defaultValue": "tbd",
+            "defaultValue": "[resourceID('Microsoft.Network/virtualNetworks', 'HHAKS4-VNet')]",
             "metadata": {
                 "description": "vnetID"
             }
         },
         "main.linkedNetwork.bastionSubnetID": {
             "type": "string",
-            "defaultValue": "tbd",
+            "defaultValue": "[resourceID('Microsoft.Network/virtualNetworks/subnets', 'HHAKS4-VNet', 'bastionSubnet')]",
             "metadata": {
                 "description": "bastionSubnetID"
             }
