@@ -18,15 +18,15 @@
         }
     },
     "variables": {
- 
+
     },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
-            "name": "linkedNetwork",
+            "name": "[concat(deployment().name,'linkedNetwork')]",
             "properties": {
- 
+
                 "mode": "Incremental",
                 "templateLink": {
                     "relativePath": "nested/linkedNetwork.json"
@@ -45,23 +45,26 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
             "name": "[concat(deployment().name,'linkedBastion')]",
-            "properties":{ 
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', concat(deployment().name,'linkedNetwork'))]"
+            ],
+            "properties": {
                 "mode": "Incremental",
                 "templateLink": {
                     "relativePath": "nested/linkedBastion.json"
                 },
-                "parameters": { 
+                "parameters": {
                     "location": {
                         "value": "[parameters('location')]"
                     },
                     "main.deploymentName": {
                         "value": "[parameters('deploymentName')]"
                     },
-                    "main.linkedNetwork.vnetID": {                      
-                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs['toMain.linkedNetwork.vnetID'].value]"
+                    "main.linkedNetwork.vnetID": {
+                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkvnetID.value]"
                     },
                     "main.linkedNetwork.bastionSubnetID": {
-                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs['toMain.linkedNetwork.bastionSubnetID'].value]"
+                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkbastionSubnetID.value]"
                     }
                 }
             }
