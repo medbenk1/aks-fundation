@@ -296,9 +296,6 @@
 
     ],
     "outputs": {
-
-
-
         "linkedNetwork.vnetID": {
             "type": "string",
             "value": "[variables('linkedNetwork.vnetID')]"
