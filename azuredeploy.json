@@ -49,7 +49,7 @@
                 "[resourceId('Microsoft.Resources/deployments', concat(deployment().name,'linkedNetwork'))]"
             ],
             "properties": {
-                "mode": "Complete",
+                "mode": "Incremental",
                 "templateLink": {
                     "relativePath": "nested/linkedBastion.json"
                 },
@@ -62,11 +62,11 @@
                     },
                     "main.linkedNetwork.vnetID": {
 //                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkvnetID.value]",
-                        "value": "[concat(subscription().id, '/resourceGroups/', resourceGroup().name, 'Microsoft.Network/virtualNetworks', 'HHAKS4-VNet')]"
+                        "value": "[concat(subscription().id, '/resourceGroups/', resourceGroup().name, reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkvnetID.value)]"
 
                     },
                     "main.linkedNetwork.bastionSubnetID": {
-                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkbastionSubnetID.value]"
+                        "value": "[concat(subscription().id, '/resourceGroups/', resourceGroup().name, reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkbastionSubnetID.value)]"
                     }
                 }
             }
