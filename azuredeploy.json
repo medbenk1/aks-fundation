@@ -116,5 +116,12 @@
 
     ],
     "outputs": {
+        "demoAAAA": {
+            "type": "string",
+            "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkbastionSubnetID.value]"
+        }
+       
+
+
     }
 }
