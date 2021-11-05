@@ -58,10 +58,10 @@
                         "value": "[parameters('deploymentName')]"
                     },
                     "main.linkedNetwork.vnetID": {                      
-                        "value": "[reference('linkedNetwork').outputs['toMain.linkedNetwork.vnetID'].value]"
+                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs['toMain.linkedNetwork.vnetID'].value]"
                     },
                     "main.linkedNetwork.bastionSubnetID": {
-                        "value": "[reference('linkedNetwork').outputs['toMain.linkedNetwork.bastionSubnetID'].value]"
+                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs['toMain.linkedNetwork.bastionSubnetID'].value]"
                     }
                 }
             }
