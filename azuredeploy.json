@@ -61,11 +61,11 @@
                         "value": "[parameters('deploymentName')]"
                     },
                     "main.linkedNetwork.vnetID": {
-                        "value": "/subscriptions/dbcb097c-18ae-46a3-a2ec-bed81c112f15/providers/Microsoft.Network/virtualNetworks/HHAKS4-VNet"
+                        "value": " "
 
                     },
                     "main.linkedNetwork.bastionSubnetID": {
-                        "value": "/subscriptions/dbcb097c-18ae-46a3-a2ec-bed81c112f15/providers/Microsoft.Network/virtualNetworks/HHAKS4-VNet/subnets/bastionSubnet"
+                        "value": " "
                     }
                 }
             }
