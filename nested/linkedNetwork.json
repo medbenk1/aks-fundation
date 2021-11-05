@@ -51,7 +51,7 @@
 
 
 
-        "linkedNetwork.vnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('linkedNetwork.vnetName'))]",
+        "linkedNetwork.vnetID": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('linkedNetwork.vnetName'))]",
         "linkedNetwork.bastionSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.bastionSubnetName'))]",
         "linkedNetwork.aksAppPoolSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.aksAppPoolSubnetName'))]",
         "linkedNetwork.aksSystemPoolSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.aksSystemPoolSubnetName'))]",
