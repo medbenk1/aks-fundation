@@ -51,13 +51,13 @@
 
 
 
-        "linkedNetwork.vnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('linkedNetwork.vnetName'))]",
-        "linkedNetwork.bastionSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.bastionSubnetName'))]",
-        "linkedNetwork.aksAppPoolSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.aksAppPoolSubnetName'))]",
-        "linkedNetwork.aksSystemPoolSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.aksSystemPoolSubnetName'))]",
-        "linkedNetwork.reboundVMSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.reboundVMSubnetName'))]",
-        "linkedNetwork.dmzSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.dmzSubnetName'))]",
-        "linkedNetwork.privateendpointSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.privateendpointSubnetName'))]"
+        "linkedNetwork.vnetID": "[subscriptionResourceId('Microsoft.Network/virtualNetworks', parameters('linkedNetwork.vnetName'))]",
+        "linkedNetwork.bastionSubnetID": "[subscriptionResourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.bastionSubnetName'))]",
+        "linkedNetwork.aksAppPoolSubnetID": "[subscriptionResourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.aksAppPoolSubnetName'))]",
+        "linkedNetwork.aksSystemPoolSubnetID": "[subscriptionResourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.aksSystemPoolSubnetName'))]",
+        "linkedNetwork.reboundVMSubnetID": "[subscriptionResourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.reboundVMSubnetName'))]",
+        "linkedNetwork.dmzSubnetID": "[subscriptionResourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.dmzSubnetName'))]",
+        "linkedNetwork.privateendpointSubnetID": "[subscriptionResourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedNetwork.vnetName'), variables('linkedNetwork.privateendpointSubnetName'))]"
 
 
     },
