@@ -18,7 +18,7 @@
         }
     },
     "variables": {
-
+        "mainLinkedNetworkvnetID": { "value": "[reference(concat(deployment().name,'linkedNetwork')).outputs.toMainlinkedNetworkvnetID.value]" }
     },
     "resources": [
         {
@@ -61,11 +61,10 @@
                         "value": "[parameters('deploymentName')]"
                     },
                     "main.linkedNetwork.vnetID": {
-                        "value": " "
-
+                        "value": "[resourceID('Microsoft.Network/virtualNetworks', 'HHAKS4-VNet')]"
                     },
                     "main.linkedNetwork.bastionSubnetID": {
-                        "value": " "
+                        "value": "[resourceID('Microsoft.Network/virtualNetworks/subnets', 'HHAKS4-VNet', 'bastionSubnet')]"
                     }
                 }
             }
@@ -119,7 +118,7 @@
             "type": "string",
             "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkbastionSubnetID.value]"
         }
-       
+
 
 
     }
