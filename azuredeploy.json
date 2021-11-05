@@ -4,7 +4,7 @@
     "parameters": {
         "deploymentName": {
             "type": "string",
-            "defaultValue": "[uniqueString(resourceGroup().id)]",
+            "defaultValue": "[uniqueString(deployment().name())]",
             "metadata": {
                 "description": "Global deployment name"
             }
