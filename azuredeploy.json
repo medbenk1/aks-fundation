@@ -63,10 +63,10 @@
                         "value": "[parameters('deploymentName')]"
                     },
                     "linkedNetwork.vnetID": {
-                        "value": "[reference('linkedNetwork').outputs['linkedNetwork.vnetID'].value]"
+                        "value": "[reference(concat(deployment().name,'linkedlinkedNetwork')).outputs['linkedNetwork.vnetID']]"
                     },
                     "linkedNetwork.bastionSubnetID": {
-                        "value": "[reference('linkedNetwork').outputs['linkedNetwork.bastionSubnetID'].value]"
+                        "value": "[reference(concat(deployment().name,'linkedNetwork')).outputs['linkedNetwork.bastionSubnetID']]"
                     }
 
 
