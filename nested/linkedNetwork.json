@@ -8,6 +8,13 @@
                 "description": "Specify a location for the resources."
             }
         },
+        "deploymentName": {
+            "type": "string",
+            "defaultValue": "[uniqueString()]",
+            "metadata": {
+                "description": "deploymentName"
+            }
+        },
         "linkedNetwork.vnetName": {
             "type": "string",
             "defaultValue": "[concat('vNET',deployment().name)]",

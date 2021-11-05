@@ -34,6 +34,9 @@
                 "parameters": {
                     "location": {
                         "value": "[parameters('location')]"
+                    },
+                    "deploymentName": {
+                        "value": "[parameters('deploymentName')]"
                     }
                 }
             }
