@@ -248,7 +248,7 @@
                         "properties": {
                             "addressPrefix": "[variables('linkedNetwork.reboundVMSubnetRange')]",
                             "networkSecurityGroup": {
-                                "id": "[variables('linkedNetwork.privateendpointSubnetRange')]"
+                                "id": "[variables('linkedNetwork.nsgCoreID')]"
                             },
                             "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
