@@ -17,14 +17,14 @@
         },
         "linkedNetwork.vnetID": {
             "type": "string",
-            "defaultValue": "tbd.",
+            "defaultValue": "tbd",
             "metadata": {
                 "description": "vnetID"
             }
         },
         "linkedNetwork.bastionSubnetID": {
             "type": "string",
-            "defaultValue": "tbd.",
+            "defaultValue": "tbd",
             "metadata": {
                 "description": "bastionSubnetID"
             }

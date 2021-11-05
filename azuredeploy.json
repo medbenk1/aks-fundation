@@ -47,9 +47,6 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
             "name": "[concat(deployment().name,'linkedBastion')]",
-            "dependsOn": [
-                 "[resourceId(resourceGroup().name ,'Microsoft.Resources/deployments', concat(deployment().name,'linkedNetwork'))]"
-            ],
             "properties": { 
                 "expressionEvaluationOptions": {
                     "scope": "inner"
@@ -66,10 +63,10 @@
                         "value": "[parameters('deploymentName')]"
                     },
                     "linkedNetwork.vnetID": {
-                        "value": "[reference(concat(deployment().name,'linkedNetwork')).outputs['linkedNetwork.vnetID'].value]"
+                        "value": "[reference('linkedNetwork').outputs['linkedNetwork.vnetID']]"
                     },
                     "linkedNetwork.bastionSubnetID": {
-                        "value": "[reference(concat(deployment().name,'linkedNetwork')).outputs['linkedNetwork.bastionSubnetID'].value]"
+                        "value": "[reference('linkedNetwork').outputs['linkedNetwork.bastionSubnetID']]"
                     }
 
 
