@@ -15,14 +15,14 @@
                 "description": "deploymentName"
             }
         },
-        "linkedNetwork.vnetID": {
+        "main.linkedNetwork.vnetID": {
             "type": "string",
             "defaultValue": "tbd",
             "metadata": {
                 "description": "vnetID"
             }
         },
-        "linkedNetwork.bastionSubnetID": {
+        "main.linkedNetwork.bastionSubnetID": {
             "type": "string",
             "defaultValue": "tbd",
             "metadata": {
@@ -58,7 +58,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[variables('linkedBastion.bastionPublicIpAddressId')]",
-                "[parameters('linkedNetwork.vnetID')]"
+                "[parameters('main.linkedNetwork.vnetID')]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -66,7 +66,7 @@
                         "name": "IpConf",
                         "properties": {
                             "subnet": {
-                                "id": "[parameters('linkedNetwork.bastionSubnetID')]"
+                                "id": "[parameters('main.linkedNetwork.bastionSubnetID')]"
                             },
                             "publicIPAddress": {
                                 "id": "[variables('linkedBastion.bastionPublicIpAddressId')]"
