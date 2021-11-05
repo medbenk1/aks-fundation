@@ -18,7 +18,8 @@
         }
     },
     "variables": {
- 
+         "main.linkedNetwork.vnetID": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters(concat(parameters('deploymentName'),'-VNet')))]"
+
     },
     "resources": [
         {
@@ -58,7 +59,7 @@
                         "value": "[parameters('deploymentName')]"
                     },
                     "main.linkedNetwork.vnetID": {                      
-                        "value": "[reference(concat(deployment().name,'linkedNetwork')).outputs['toMain.linkedNetwork.vnetID'].value]"
+                        "value": "[variables('main.linkedNetwork.vnetID')]"
                     },
                     "main.linkedNetwork.bastionSubnetID": {
                         "value": "[reference(concat(deployment().name,'linkedNetwork')).outputs['toMain.linkedNetwork.bastionSubnetID'].value]"
