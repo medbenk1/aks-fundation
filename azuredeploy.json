@@ -17,7 +17,9 @@
             }
         }
     },
-    "variables": {},
+    "variables": {
+ 
+    },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
@@ -46,7 +48,7 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(deployment().name,'linkedBastion')]",
             "dependsOn": [
-                 "[reference(concat(deployment().name,'linkedNetwork')).outputs['linkedNetwork.bastionSubnetID'].value]"
+                 "[resourceId(resourceGroup().name ,'Microsoft.Resources/deployments', concat(deployment().name,'linkedNetwork'))]"
             ],
             "properties": { 
                 "expressionEvaluationOptions": {
