@@ -298,7 +298,7 @@
     "outputs": {
         "linkedNetwork.vnetID": {
             "type": "string",
-            "value": "[resourceId(subscription().id, resourceGroup().name,'Microsoft.Network/virtualNetworks',parameters('linkedNetwork.vnetName'))]"
+            "value": "[variables('linkedNetwork.vnetID')]"
         },
 
         "linkedNetwork.bastionSubnetID": {
