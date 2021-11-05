@@ -7,13 +7,41 @@
             "metadata": {
                 "description": "Specify a location for the resources."
             }
+        },
+        "linkedNetwork.vnetName": {
+            "type": "string",
+            "defaultValue": "[concat('vNET',resourceGroup().name)]",
+            "metadata": {
+                "description": "vNET name"
+            }
+        },
+        "linkedNetwork.vnetRange": {
+            "type": "string",
+            "defaultValue": "10.128.0.0/16",
+            "metadata": {
+                "description": "vNET range /16"
+            }
         }
+    },
+    "variables": {
+        "linkedNetwork.nsgCoreName": "[concat('vNET',resourceGroup().name,'nsgCore')]",
+        "linkedNetwork.nsgCoreID": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('linkedNetwork.nsgCoreName'))]",
+        "linkedNetwork.vnetRangesubnet": "[first(split(parameters('linkedNetwork.vnetRange'), '/'))]",
+        "linkedNetwork.vnetRangesubnetOctets2": "[take(split(variables('linkedNetwork.vnetRangesubnet'), '.'), 2)]",
+        "linkedNetwork.vnetRangesubnetOctets2String": "[concat(variables('linkedNetwork.vnetRangesubnetOctets2')[0], '.', variables('linkedNetwork.vnetRangesubnetOctets2')[1], '.')]",
+        "linkedNetwork.bastionSubnetRange": "[concat(variables('linkedNetwork.vnetRangesubnetOctets2String'),'10.0/24')]",
+        "linkedNetwork.aksAppPoolSubnetRange": "[concat(variables('linkedNetwork.vnetRangesubnetOctets2String'),'11.0/24')]",
+        "linkedNetwork.aksSystemPoolSubnetRange": "[concat(variables('linkedNetwork.vnetRangesubnetOctets2String'),'12.0/24')]",
+        "linkedNetwork.reboundVMSubnetRange": "[concat(variables('linkedNetwork.vnetRangesubnetOctets2String'),'13.0/24')]",
+        "linkedNetwork.dmzSubnetRange": "[concat(variables('linkedNetwork.vnetRangesubnetOctets2String'),'14.0/24')]",
+        "linkedNetwork.privateendpointSubnetRange": "[concat(variables('linkedNetwork.vnetRangesubnetOctets2String'),'15.0/24')]"
+
     },
     "resources": [
         {
             "apiVersion": "2020-08-01",
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "nsg-vnet",
+            "name": "[variables('linkedNetwork.nsgCoreName')]",
             "location": "[parameters('location')]",
             "properties": {
                 "securityRules": [
@@ -167,42 +195,60 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-06-01",
-            "name": "[variables('vNETname')]",
+            "name": "[parameters('linkedNetwork.vnetName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[variables('bastionSubnetNsgId')]"
+                "[variables('linkedNetwork.nsgCoreID')]"
             ],
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "10.128.0.0/16"
+                        "[parameters('linkedNetwork.vnetRange')]"
                     ]
                 },
                 "subnets": [
                     {
-                        "name": "[variables('bastionSubnetName')]",
+                        "name": "bastionSubnet",
                         "properties": {
-                            "addressPrefix": "[variables('bastionSubnet')]",
+                            "addressPrefix": "[variables('linkedNetwork.bastionSubnetRange')]",
                             "networkSecurityGroup": {
-                                "id": "[variables('bastionSubnetNsgId')]"
+                                "id": "[variables('linkedNetwork.nsgCoreID')]"
                             }
                         }
                     },
                     {
-                        "name": "AksSubnet",
+                        "name": "aksAppPoolSubnet",
                         "properties": {
-                            "addressPrefix": "[variables('aksSubnet')]",
+                            "addressPrefix": "[variables('linkedNetwork.aksAppPoolSubnetRange')]",
                             "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }
 
                     },
                     {
-                        "name": "[parameters('vmSubnetName')]",
+                        "name": "aksSystemPoolSubnet",
                         "properties": {
-                            "addressPrefix": "[variables('vmSubnet')]",
+                            "addressPrefix": "[variables('linkedNetwork.aksSystemPoolSubnetRange')]",
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+
+                    },
+                    {
+                        "name": "privateEndpointSubnet",
+                        "properties": {
+                            "addressPrefix": "[variables('linkedNetwork.privateendpointSubnetRange')]",
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+
+                    },
+                    {
+                        "name": "vmSubnet",
+                        "properties": {
+                            "addressPrefix": "[variables('linkedNetwork.reboundVMSubnetRange')]",
                             "networkSecurityGroup": {
-                                "id": "[variables('vmSubnetNsgId')]"
+                                "id": "[variables('linkedNetwork.reboundVMSubnetRange')]"
                             },
                             "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
@@ -211,7 +257,7 @@
                     {
                         "name": "dmzSubnet",
                         "properties": {
-                            "addressPrefix": "[variables('dmzSubnet')]",
+                            "addressPrefix": "[variables('linkedNetwork.dmzSubnetRange')]",
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }
