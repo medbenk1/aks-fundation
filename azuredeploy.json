@@ -49,7 +49,7 @@
                 "[resourceId('Microsoft.Resources/deployments', concat(deployment().name,'linkedNetwork'))]"
             ],
             "properties": {
-                "mode": "Incremental",
+                "mode": "Complete",
                 "templateLink": {
                     "relativePath": "nested/linkedBastion.json"
                 },
