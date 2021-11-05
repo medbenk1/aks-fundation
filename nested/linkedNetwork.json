@@ -10,7 +10,7 @@
         },
         "main.deploymentName": {
             "type": "string",
-            "defaultValue": "[uniqueString()]",
+            "defaultValue": "[uniqueString(resourceGroup().id)]",
             "metadata": {
                 "description": "deploymentName"
             }
