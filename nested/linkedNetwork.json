@@ -296,32 +296,32 @@
 
     ],
     "outputs": {
-        "linkedNetwork.vnetID": {
+        "toMain.linkedNetwork.vnetID": {
             "type": "string",
             "value": "[variables('linkedNetwork.vnetID')]"
         },
 
-        "linkedNetwork.bastionSubnetID": {
+        "toMain.linkedNetwork.bastionSubnetID": {
             "type": "string",
             "value": "[variables('linkedNetwork.bastionSubnetID')]"
         },
-        "linkedNetwork.aksAppPoolSubnetID": {
+        "toMain.linkedNetwork.aksAppPoolSubnetID": {
             "type": "string",
             "value": "[variables('linkedNetwork.aksAppPoolSubnetID')]"
         },
-        "linkedNetwork.aksSystemPoolSubnetID": {
+        "toMain.linkedNetwork.aksSystemPoolSubnetID": {
             "type": "string",
             "value": "[variables('linkedNetwork.aksSystemPoolSubnetID')]"
         },
-        "linkedNetwork.privateendpointSubnetID": {
+        "toMain.linkedNetwork.privateendpointSubnetID": {
             "type": "string",
             "value": "[variables('linkedNetwork.privateendpointSubnetID')]"
         },
-        "linkedNetwork.reboundVMSubnetID": {
+        "toMain.linkedNetwork.reboundVMSubnetID": {
             "type": "string",
             "value": "[variables('linkedNetwork.reboundVMSubnetID')]"
         },
-        "linkedNetwork.dmzSubnetID": {
+        "toMain.linkedNetwork.dmzSubnetID": {
             "type": "string",
             "value": "[variables('linkedNetwork.dmzSubnetID')]"
         }
