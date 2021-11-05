@@ -17,7 +17,7 @@
         },
         "linkedNetwork.vnetName": {
             "type": "string",
-            "defaultValue": "[concat(parameters('main.deploymentName'),'VNet')]",
+            "defaultValue": "[concat(parameters('main.deploymentName'),'-VNet')]",
             "metadata": {
                 "description": "vNET name"
             }
@@ -31,7 +31,7 @@
         }
     },
     "variables": {
-        "linkedNetwork.nsgCoreName": "[concat(parameters('main.deploymentName'),'NsgCore')]",
+        "linkedNetwork.nsgCoreName": "[concat(parameters('main.deploymentName'),'-NsgCore')]",
         "linkedNetwork.nsgCoreID": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('linkedNetwork.nsgCoreName'))]",
         "linkedNetwork.vnetRangesubnet": "[first(split(parameters('linkedNetwork.vnetRange'), '/'))]",
         "linkedNetwork.vnetRangesubnetOctets2": "[take(split(variables('linkedNetwork.vnetRangesubnet'), '.'), 2)]",
