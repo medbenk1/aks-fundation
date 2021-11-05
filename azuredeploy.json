@@ -45,9 +45,6 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
             "name": "[concat(deployment().name,'linkedBastion')]",
-            "dependsOn": [
-                "[reference(concat(deployment().name,'linkedNetwork'))]"
-            ],
             "properties": { 
                 "mode": "Incremental",
                 "templateLink": {
@@ -66,10 +63,6 @@
                     "main.linkedNetwork.bastionSubnetID": {
                         "value": "[reference(concat(deployment().name,'linkedNetwork')).outputs['toMain.linkedNetwork.bastionSubnetID'].value]"
                     }
-
-
-
-
                 }
             }
         },
