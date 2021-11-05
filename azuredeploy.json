@@ -26,6 +26,9 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(deployment().name,'linkedNetwork')]",
             "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
                 "mode": "Incremental",
                 "templateLink": {
                     "relativePath": "nested/linkedNetwork.json"
@@ -45,6 +48,9 @@
             "apiVersion": "2021-04-01",
             "name": "[concat(deployment().name,'linkedBastion')]",
             "properties": { 
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
                 "mode": "Incremental",
                 "templateLink": {
                     "relativePath": "nested/linkedBastion.json"
