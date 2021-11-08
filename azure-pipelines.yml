@@ -17,3 +17,15 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Compte test(dbcb097c-18ae-46a3-a2ec-bed81c112f15)'
+    subscriptionId: 'dbcb097c-18ae-46a3-a2ec-bed81c112f15'
+    action: 'Create network fundation'
+    resourceGroupName: 'rg-aksfundation-mohammed'
+    location: 'West Europe'
+    templateLocation: 'URL of the file'
+    csmFileLink: 'https://raw.githubusercontent.com/medbenk1/aks-fundation/main/nested/linkedNetwork.json'
+    deploymentMode: 'Incremental'
