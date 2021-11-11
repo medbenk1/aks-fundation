@@ -39,71 +39,7 @@
                     }
                 }
             }
-        },
-  /*      {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
-            "name": "[concat(deployment().name,'linkedBastion')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat(deployment().name,'linkedNetwork'))]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/linkedBastion.json"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "main.deploymentName": {
-                        "value": "[parameters('deploymentName')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
-            "name": "[concat(deployment().name,'linkedLogAnalytics')]",
-            "properties": {
-                "expressionEvaluationOptions": {
-                    "scope": "inner"
-                },
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/linkedLogAnalytics.json"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
-            "name": "[concat(deployment().name,'linkedManagedIdentity')]",
-            "properties": {
-                "expressionEvaluationOptions": {
-                    "scope": "inner"
-                },
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/linkedManagedIdentity.json"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
-            "name": "[concat(deployment().name,'linkedAksCluster')]",
-            "properties": {
-                "expressionEvaluationOptions": {
-                    "scope": "inner"
-                },
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/linkedAKSCluster.json"
-                }
-            }
-        }*/
+        }
 
     ],
     "outputs": {
