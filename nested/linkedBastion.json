@@ -55,10 +55,6 @@
             "type": "Microsoft.Network/bastionHosts",
             "name": "[variables('linkedBastion.bastionHostName')]",
             "location": "[parameters('location')]",
-            "dependsOn": [
-                "[variables('linkedBastion.bastionPublicIpAddressId')]",
-                "[parameters('main.linkedNetwork.vnetID')]"
-            ],
             "properties": {
                 "ipConfigurations": [
                     {
