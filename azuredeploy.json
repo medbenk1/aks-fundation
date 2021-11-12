@@ -6,7 +6,7 @@
             "type": "string",
             "defaultValue": "[uniqueString(deployment().name)]",
             "metadata": {
-                "description": "Global deployment name"
+                "description": "Global deployment  name"
             }
         },
         "location": {
