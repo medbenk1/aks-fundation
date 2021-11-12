@@ -16,18 +16,6 @@
                 "description": "deploymentName"
             }
         },
- /*       "main.linkedNetwork.vnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "vnet Name"
-            }
-        },
-        "main.linkedNetwork.bastionSubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "bastion Subnet Name"
-            }
-        },*/
         "main.linkedNetwork.bastionSubnetId": {
             "type": "string",
             "metadata": {
@@ -39,7 +27,6 @@
         "linkedBastion.bastionPublicIpAddressName": "[concat(parameters('main.deploymentName'),'-PubIP1')]",
         "linkedBastion.bastionPublicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('linkedBastion.bastionPublicIpAddressName'))]",
         "linkedBastion.bastionHostName": "[concat(parameters('main.deploymentName'),'-bastion1')]"
-     //   "linkedBastion.bastionSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('main.linkedNetwork.vnetName'), parameters('main.linkedNetwork.bastionSubnetName'))]"
 
     },
     "resources": [
@@ -63,6 +50,7 @@
             "dependsOn": [
                 "[variables('linkedBastion.bastionPublicIpAddressId')]"
             ],
+            "sku": "Standard",
             "properties": {
                 "ipConfigurations": [
                     {
