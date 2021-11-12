@@ -16,16 +16,22 @@
                 "description": "deploymentName"
             }
         },
-        "main.linkedNetwork.vnetID": {
+ /*       "main.linkedNetwork.vnetName": {
             "type": "string",
             "metadata": {
-                "description": "vnetID"
+                "description": "vnet Name"
             }
         },
-        "main.linkedNetwork.bastionSubnetID": {
+        "main.linkedNetwork.bastionSubnetName": {
             "type": "string",
             "metadata": {
-                "description": "bastionSubnetID"
+                "description": "bastion Subnet Name"
+            }
+        },*/
+        "main.linkedNetwork.bastionSubnetId": {
+            "type": "string",
+            "metadata": {
+                "description": "bastion Subnet Name"
             }
         }
     },
@@ -33,11 +39,10 @@
         "linkedBastion.bastionPublicIpAddressName": "[concat(parameters('main.deploymentName'),'-PubIP1')]",
         "linkedBastion.bastionPublicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('linkedBastion.bastionPublicIpAddressName'))]",
         "linkedBastion.bastionHostName": "[concat(parameters('main.deploymentName'),'-bastion1')]"
+     //   "linkedBastion.bastionSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('main.linkedNetwork.vnetName'), parameters('main.linkedNetwork.bastionSubnetName'))]"
 
     },
     "resources": [
-
-
         {
             "apiVersion": "2020-05-01",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -55,13 +60,16 @@
             "type": "Microsoft.Network/bastionHosts",
             "name": "[variables('linkedBastion.bastionHostName')]",
             "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('linkedBastion.bastionPublicIpAddressId')]"
+            ],
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "IpConf",
                         "properties": {
                             "subnet": {
-                                "id": "[parameters('main.linkedNetwork.bastionSubnetID')]"
+                                "id": "[parameters('main.linkedNetwork.bastionSubnetId')]"
                             },
                             "publicIPAddress": {
                                 "id": "[variables('linkedBastion.bastionPublicIpAddressId')]"
@@ -71,12 +79,6 @@
                 ]
             }
         }
-
-
-
-
     ],
-    "outputs": {
-
-    }
+    "outputs": {}
 }
