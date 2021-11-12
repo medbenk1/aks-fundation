@@ -50,8 +50,14 @@
             "dependsOn": [
                 "[variables('linkedBastion.bastionPublicIpAddressId')]"
             ],
-            "sku": "Standard",
+            "sku": {
+                "name": "Standard"
+            },
             "properties": {
+                "enableFileCopy": true,
+                "enableIpConnect": true,
+                "enableShareableLink": true,
+                "enableTunneling": true,
                 "ipConfigurations": [
                     {
                         "name": "IpConf",
