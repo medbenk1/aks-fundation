@@ -26,6 +26,7 @@
             "name": "[concat(deployment().name,'linkedNetwork')]",
             "properties": {
 
+
                 "mode": "Incremental",
                 "templateLink": {
                     "relativePath": "nested/linkedNetwork.json"
