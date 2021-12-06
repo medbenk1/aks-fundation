@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "location": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "reboundVmSize": {
+            "value": "Standard_DS3_v2"
+        },
+        "reboundVmAdminUsername": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "reboundVmAdminPasswordOrKey": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "reboundVmauthenticationType": {
+            "value": "password"
+        }
+    }
+}

@@ -1,0 +1,235 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "Specify a location for the resources."
+            }
+        },
+        "main.deploymentName": {
+            "type": "string",
+            "defaultValue": "[uniqueString(resourceGroup().id)]",
+            "metadata": {
+                "description": "deploymentName"
+            }
+        },
+        "main.linkedFundation.bastionSubnetId": {
+            "type": "string",
+            "metadata": {
+                "description": "bastion Subnet Name"
+            }
+        },
+        "main.linkedFundation.vmSubnetId": {
+            "type": "string",
+            "metadata": {
+                "description": "bastion Subnet Name"
+            }
+        },
+        "main.reboundVmSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS3_v2",
+            "metadata": {
+                "description": "Specifies the size of the virtual machine."
+            }
+        },
+        "main.reboundVmAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the administrator account of the virtual machine."
+            }
+        },
+        "main.reboundVmAdminPasswordOrKey": {
+            "type": "securestring",
+
+            "metadata": {
+                "description": "Specifies the SSH Key or password for the virtual machine. SSH key is recommended."
+            }
+        },
+        "main.reboundVmauthenticationType": {
+            "type": "string",
+            "defaultValue": "password",
+            "allowedValues": [
+                "sshPublicKey",
+                "password"
+            ],
+            "metadata": {
+                "description": "Specifies the type of authentication when accessing the Virtual Machine. SSH key is recommended."
+            }
+        }
+
+    },
+    "variables": {
+        "linkedDependencies.bastionPublicIpAddressName": "[concat(parameters('main.deploymentName'),'-PubIP1')]",
+        "linkedDependencies.bastionPublicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('linkedDependencies.bastionPublicIpAddressName'))]",
+        "linkedDependencies.bastionHostName": "[concat(parameters('main.deploymentName'),'-bastion1')]",
+        "linkedDependencies.storageAccountName": "[concat(parameters('main.deploymentName'),'-sa1')]",
+        "linkedDependencies.storageAccountID": "[resourceId('Microsoft.Storage/storageAccounts', variables('linkedDependencies.storageAccountName'))]",
+        "linkedDependencies.reboundNICName": "[concat(parameters('main.deploymentName'),'-reboundNIC')]",
+        "linkedDependencies.vmName": "[concat(parameters('main.deploymentName'),'-reboundVM1')]",
+        "linkedDependencies.vmimagePublisher": "Canonical",
+        "linkedDependencies.vmdiskStorageAccounType": "Premium_LRS",
+        "linkedDependencies.vmimageOffer": "UbuntuServer",
+        "linkedDependencies.vmimageSku": "18.04-LTS",
+        "linkedDependencies.vmNumDataDisk": 1,
+        "linkedDependencies.vmOsDiskSize": 50,
+        "linkedDependencies.vmDataDiskSize": 50,
+        "linkedDependencies.vmdataDiskCaching": "ReadWrite",
+        "linkedDependencies.vmlinuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+                "publicKeys": [
+                    {
+                        "path": "[concat('/home/', parameters('main.reboundVmAdminUsername'), '/.ssh/authorized_keys')]",
+                        "keyData": "[parameters('main.reboundVmAdminPasswordOrKey')]"
+                    }
+                ]
+            },
+            "provisionVMAgent": true
+        }
+
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-05-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('linkedDependencies.bastionPublicIpAddressName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "apiVersion": "2020-11-01",
+            "type": "Microsoft.Network/bastionHosts",
+            "name": "[variables('linkedDependencies.bastionHostName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('linkedDependencies.bastionPublicIpAddressId')]"
+            ],
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "enableFileCopy": true,
+                "enableIpConnect": true,
+                "enableShareableLink": true,
+                "enableTunneling": true,
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "subnet": {
+                                "id": "[parameters('main.linkedFundation.bastionSubnetId')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[variables('linkedDependencies.bastionPublicIpAddressId')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('linkedDependencies.storageAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2"
+        },
+        {
+            "apiVersion": "2020-04-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('linkedDependencies.reboundNICName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[parameters('main.linkedFundation.vmSubnetId')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('linkedDependencies.vmName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('linkedDependencies.reboundNICName')]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('main.reboundVmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('linkedDependencies.vmName')]",
+                    "adminUsername": "[parameters('main.reboundVmAdminUsername')]",
+                    "adminPassword": "[parameters('main.reboundVmAdminPasswordOrKey')]",
+                    "linuxConfiguration": "[if(equals(parameters('main.reboundVmauthenticationType'), 'password'), json('null'), variables('linkedDependencies.vmlinuxConfiguration'))]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('linkedDependencies.vmimagePublisher')]",
+                        "offer": "[variables('linkedDependencies.vmimageOffer')]",
+                        "sku": "[variables('linkedDependencies.vmimageSku')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(variables('linkedDependencies.vmName'),'_OSDisk')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "diskSizeGB": "[variables('linkedDependencies.vmOsDiskSize')]",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('linkedDependencies.vmdiskStorageAccounType')]"
+                        }
+                    },
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[variables('linkedDependencies.vmNumDataDisk')]",
+                            "input": {
+                                "caching": "[variables('linkedDependencies.vmdataDiskCaching')]",
+                                "diskSizeGB": "[variables('linkedDependencies.vmDataDiskSize')]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "name": "[concat(variables('linkedDependencies.vmName'),'-DataDisk',copyIndex('dataDisks'))]",
+                                "createOption": "Empty",
+                                "managedDisk": {
+                                    "storageAccountType": "[variables('linkedDependencies.vmdiskStorageAccounType')]"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('linkeddependencies.reboundNICName'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(variables('linkedDependencies.storageAccountID')).primaryEndpoints['blob']]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
