@@ -15,6 +15,37 @@
             "metadata": {
                 "description": "Location for all resources. "
             }
+        },
+        "reboundVmSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS3_v2",
+            "metadata": {
+                "description": "Specifies the size of the virtual machine."
+            }
+        },
+        "reboundVmAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the administrator account of the virtual machine."
+            }
+        },
+        "reboundVmAdminPasswordOrKey": {
+            "type": "securestring",
+
+            "metadata": {
+                "description": "Specifies the SSH Key or password for the virtual machine. SSH key is recommended."
+            }
+        },
+        "reboundVmauthenticationType": {
+            "type": "string",
+            "defaultValue": "password",
+            "allowedValues": [
+                "sshPublicKey",
+                "password"
+            ],
+            "metadata": {
+                "description": "Specifies the type of authentication when accessing the Virtual Machine. SSH key is recommended."
+            }
         }
     },
     "variables": {
@@ -23,13 +54,13 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
-            "name": "[concat(deployment().name,'linkedNetwork')]",
+            "name": "[concat(deployment().name,'linkedFundation')]",
             "properties": {
 
 
                 "mode": "Incremental",
                 "templateLink": {
-                    "relativePath": "nested/linkedNetwork.json"
+                    "relativePath": "nested/linkedFundation.json"
                 },
                 "parameters": {
                     "location": {
@@ -44,12 +75,11 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
-            "name": "[concat(deployment().name,'linkedBastion')]",
+            "name": "[concat(deployment().name,'linkedDependencies')]",
             "properties": {
-
                 "mode": "Incremental",
                 "templateLink": {
-                    "relativePath": "nested/linkedBastion.json"
+                    "relativePath": "nested/linkedDependencies.json"
                 },
                 "parameters": {
                     "location": {
@@ -58,18 +88,36 @@
                     "main.deploymentName": {
                         "value": "[parameters('deploymentName')]"
                     },
-                    "main.linkedNetwork.bastionSubnetId": {
-                        "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkbastionSubnetID.value]"  
+                    "main.linkedFundation.bastionSubnetId": {
+                        "value": "[reference(concat(deployment().name,'linkedFundation'),'2021-04-01').outputs.toMainlinkedFundationBastionSubnetID.value]"
+                    },
+                    "main.linkedFundation.vmSubnetId": {
+                        "value": "[reference(concat(deployment().name,'linkedFundation'),'2021-04-01').outputs.toMainlinkedFundationreboundVMSubnetID.value]"
+                    },
+                    "main.reboundVmSize": {
+                        "value": "[parameters('reboundVmSize')]"
+                    },
+                    "main.reboundVmAdminUsername": {
+                        "value": "[parameters('reboundVmAdminUsername')]"
+
+                    },
+                    "main.reboundVmAdminPasswordOrKey": {
+                        "value": "[parameters('reboundVmAdminPasswordOrKey')]"
+
+                    },
+                    "main.reboundVmauthenticationType": {
+                        "value": "[parameters('reboundVmauthenticationType')]"
+
                     }
                 }
             }
         }
- 
+
     ],
     "outputs": {
         "demoAAAA": {
             "type": "string",
-            "value": "[reference(concat(deployment().name,'linkedNetwork'),'2021-04-01').outputs.toMainlinkedNetworkbastionSubnetID.value]"
+            "value": "[reference(concat(deployment().name,'linkedFundation'),'2021-04-01').outputs.toMainlinkedFundationBastionSubnetID.value]"
         }
 
 

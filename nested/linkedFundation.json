@@ -1,0 +1,332 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "Specify a location for the resources."
+            }
+        },
+        "main.deploymentName": {
+            "type": "string",
+            "defaultValue": "[uniqueString(resourceGroup().id)]",
+            "metadata": {
+                "description": "deploymentName"
+            }
+        },
+        "linkedFundation.vnetName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('main.deploymentName'),'-VNet')]",
+            "metadata": {
+                "description": "vNET name"
+            }
+        },
+        "linkedFundation.vnetRange": {
+            "type": "string",
+            "defaultValue": "10.128.0.0/16",
+            "metadata": {
+                "description": "vNET range /16"
+            }
+        }
+    },
+    "variables": {
+        "linkedFundation.nsgCoreName": "[concat(parameters('main.deploymentName'),'-NsgCore')]",
+        "linkedFundation.nsgCoreID": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('linkedFundation.nsgCoreName'))]",
+        "linkedFundation.vnetRangesubnet": "[first(split(parameters('linkedFundation.vnetRange'), '/'))]",
+        "linkedFundation.vnetRangesubnetOctets2": "[take(split(variables('linkedFundation.vnetRangesubnet'), '.'), 2)]",
+        "linkedFundation.vnetRangesubnetOctets2String": "[concat(variables('linkedFundation.vnetRangesubnetOctets2')[0], '.', variables('linkedFundation.vnetRangesubnetOctets2')[1], '.')]",
+        "linkedFundation.bastionSubnetRange": "[concat(variables('linkedFundation.vnetRangesubnetOctets2String'),'10.0/24')]",
+        "linkedFundation.aksAppPoolSubnetRange": "[concat(variables('linkedFundation.vnetRangesubnetOctets2String'),'11.0/24')]",
+        "linkedFundation.aksSystemPoolSubnetRange": "[concat(variables('linkedFundation.vnetRangesubnetOctets2String'),'12.0/24')]",
+        "linkedFundation.reboundVMSubnetRange": "[concat(variables('linkedFundation.vnetRangesubnetOctets2String'),'13.0/24')]",
+        "linkedFundation.dmzSubnetRange": "[concat(variables('linkedFundation.vnetRangesubnetOctets2String'),'14.0/24')]",
+        "linkedFundation.privateendpointSubnetRange": "[concat(variables('linkedFundation.vnetRangesubnetOctets2String'),'15.0/24')]",
+        "linkedFundation.bastionSubnetName": "AzureBastionSubnet",
+        "linkedFundation.aksAppPoolSubnetName": "aksAppPoolSubnet",
+        "linkedFundation.aksSystemPoolSubnetName": "aksSystemPoolSubnet",
+        "linkedFundation.reboundVMSubnetName": "reboundVMSubnet",
+        "linkedFundation.dmzSubnetName": "dmzSubnet",
+        "linkedFundation.privateendpointSubnetName": "privateEndpointSubnet",
+
+
+
+        "linkedFundation.vnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('linkedFundation.vnetName'))]",
+        "linkedFundation.bastionSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedFundation.vnetName'), variables('linkedFundation.bastionSubnetName'))]",
+        "linkedFundation.aksAppPoolSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedFundation.vnetName'), variables('linkedFundation.aksAppPoolSubnetName'))]",
+        "linkedFundation.aksSystemPoolSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedFundation.vnetName'), variables('linkedFundation.aksSystemPoolSubnetName'))]",
+        "linkedFundation.reboundVMSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedFundation.vnetName'), variables('linkedFundation.reboundVMSubnetName'))]",
+        "linkedFundation.dmzSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedFundation.vnetName'), variables('linkedFundation.dmzSubnetName'))]",
+        "linkedFundation.privateendpointSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('linkedFundation.vnetName'), variables('linkedFundation.privateendpointSubnetName'))]"
+
+
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-08-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('linkedFundation.nsgCoreName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowHttpsInBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationPortRange": "443",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowGatewayManagerInBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "GatewayManager",
+                            "destinationPortRange": "443",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 110,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowLoadBalancerInBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationPortRange": "443",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 120,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowBastionHostCommunicationInBound",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationPortRanges": [
+                                "8080",
+                                "5701"
+                            ],
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 130,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationPortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowSshRdpOutBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationPortRanges": [
+                                "22",
+                                "3389"
+                            ],
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "AllowAzureCloudCommunicationOutBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationPortRange": "443",
+                            "destinationAddressPrefix": "AzureCloud",
+                            "access": "Allow",
+                            "priority": 110,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "AllowBastionHostCommunicationOutBound",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationPortRanges": [
+                                "8080",
+                                "5701"
+                            ],
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 120,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "AllowGetSessionInformationOutBound",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "destinationPortRanges": [
+                                "80",
+                                "443"
+                            ],
+                            "access": "Allow",
+                            "priority": 130,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 1000,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            }
+        },
+
+
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('linkedFundation.vnetName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('linkedFundation.nsgCoreID')]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('linkedFundation.vnetRange')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('linkedFundation.bastionSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('linkedFundation.bastionSubnetRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[variables('linkedFundation.nsgCoreID')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('linkedFundation.aksAppPoolSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('linkedFundation.aksAppPoolSubnetRange')]",
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+
+                    },
+                    {
+                        "name": "[variables('linkedFundation.aksSystemPoolSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('linkedFundation.aksSystemPoolSubnetRange')]",
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+
+                    },
+                    {
+                        "name": "[variables('linkedFundation.privateendpointSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('linkedFundation.privateendpointSubnetRange')]",
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+
+                    },
+                    {
+                        "name": "[variables('linkedFundation.reboundVMSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('linkedFundation.reboundVMSubnetRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[variables('linkedFundation.nsgCoreID')]"
+                            },
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[variables('linkedFundation.dmzSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('linkedFundation.dmzSubnetRange')]",
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+
+                    }
+
+
+
+                ]
+            }
+        }
+
+    ],
+    "outputs": {
+        "toMainlinkedFundationvnetID": {
+            "type": "string",
+            "value": "[variables('linkedFundation.vnetID')]"
+        },
+
+        "toMainlinkedFundationBastionSubnetID": {
+            "type": "string",
+            "value": "[variables('linkedFundation.bastionSubnetID')]"
+        },
+        "toMainlinkedFundationaksAppPoolSubnetID": {
+            "type": "string",
+            "value": "[variables('linkedFundation.aksAppPoolSubnetID')]"
+        },
+        "toMainlinkedFundationaksSystemPoolSubnetID": {
+            "type": "string",
+            "value": "[variables('linkedFundation.aksSystemPoolSubnetID')]"
+        },
+        "toMainlinkedFundationprivateendpointSubnetID": {
+            "type": "string",
+            "value": "[variables('linkedFundation.privateendpointSubnetID')]"
+        },
+        "toMainlinkedFundationreboundVMSubnetID": {
+            "type": "string",
+            "value": "[variables('linkedFundation.reboundVMSubnetID')]"
+        },
+        "toMainlinkedFundationdmzSubnetID": {
+            "type": "string",
+            "value": "[variables('linkedFundation.dmzSubnetID')]"
+        }
+
+
+    }
+}
